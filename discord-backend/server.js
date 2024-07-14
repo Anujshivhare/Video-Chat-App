@@ -3,6 +3,9 @@ const http = require("http");
 const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
+const path = require("path");
+
+// const __dirname = path.resolve();
 
 const socketServer = require("./socketServer");
 const authRoutes = require("./routes/authRoutes");
@@ -17,6 +20,13 @@ app.use(cors());
 // register the routes
 app.use("/api/auth", authRoutes);
 app.use("/api/friend-invitation", friendInvitationRoutes);
+app.use(express.static(path.join(__dirname, "../discord-frontend/build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "..", "discord-frontend", "build", "index.html")
+  );
+});
 
 const server = http.createServer(app);
 socketServer.registerSocketServer(server);
